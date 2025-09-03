@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, console} from "forge-std/Test.sol";
-import {HashStorage} from "../src/HashStorage.sol";
+import { Test } from "forge-std/Test.sol";
+import { HashStorage } from "../src/HashStorage.sol";
 
 contract HashStorageTest is Test {
     HashStorage public hashStorage;
@@ -11,7 +11,7 @@ contract HashStorageTest is Test {
     address owner = vm.addr(2);
     address unknownActor = vm.addr(3);
 
-    mapping(string => HashStorage.periodDetails) public testData;
+    mapping(string => HashStorage.PeriodDetails) public testData;
 
     function setUp() public {
         hashStorage = new HashStorage(owner);
@@ -86,7 +86,7 @@ contract HashStorageTest is Test {
     function test_commitAsUnknownActor()
         public
     {
-        testData["2025Q2"] = HashStorage.periodDetails(
+        testData["2025Q2"] = HashStorage.PeriodDetails(
             keccak256("test data q2"),
             "https://www.bea.gov/sites/default/files/2025-08/gdp2q25-2nd.pdf",
             33
@@ -142,12 +142,12 @@ contract HashStorageTest is Test {
     function test_commitDataAndTestRead()
         public
     {
-        testData["2025Q2"] = HashStorage.periodDetails(
+        testData["2025Q2"] = HashStorage.PeriodDetails(
             keccak256("test data q2"),
             "https://www.bea.gov/sites/default/files/2025-08/gdp2q25-2nd.pdf",
             33
         );
-        testData["2025Q3"] = HashStorage.periodDetails(
+        testData["2025Q3"] = HashStorage.PeriodDetails(
             keccak256("test data q3"),
             "https://www.bea.gov/sites/default/files/2025-08/gdp3q25-2nd.pdf",
             20
@@ -166,7 +166,7 @@ contract HashStorageTest is Test {
 
         // Now read the data for the committed time periods and validate data return
        for(uint256 i=0; i<testTimePeriods.length; i++) {
-            HashStorage.periodDetails memory data = hashStorage.read(testTimePeriods[i]);
+            HashStorage.PeriodDetails memory data = hashStorage.read(testTimePeriods[i]);
             assertEq(data.pdfHash, testData[testTimePeriods[i]].pdfHash, "File Hash is incorrect");
             assertEq(data.pdfLocation, testData[testTimePeriods[i]].pdfLocation, "File location is incorrect");
             assertEq(data.gdp, testData[testTimePeriods[i]].gdp, "Gdp is incorrect");

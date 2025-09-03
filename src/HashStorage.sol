@@ -5,12 +5,12 @@ pragma solidity ^0.8.13;
 contract HashStorage {
     address public owner;
 
-    struct periodDetails {
+    struct PeriodDetails {
         bytes32 pdfHash;    // sha256 of pdf
         string pdfLocation; // https location of pdf (ie: https://www.bea.gov/sites/default/files/2025-08/gdp2q25-2nd.pdf)
         uint256 gdp;        // Increments of tenths 
     }
-    mapping(string => periodDetails) public gdpDetails;
+    mapping(string => PeriodDetails) public gdpDetails;
 
     // Errors
     error NoAuthorisation();
@@ -70,7 +70,7 @@ contract HashStorage {
         }
 
         emit NewEntry(_timePeriod, _pdfHash);
-        gdpDetails[_timePeriod] = periodDetails(_pdfHash, _pdfLocation, _gdp);
+        gdpDetails[_timePeriod] = PeriodDetails(_pdfHash, _pdfLocation, _gdp);
         return true;
     }
 
@@ -80,14 +80,14 @@ contract HashStorage {
     function read(string calldata _timePeriod)
         public
         view
-        returns(periodDetails memory)
+        returns(PeriodDetails memory)
     {
         (bytes32 pdfHash, string memory pdfLocation, uint256 gdp) = this.gdpDetails(_timePeriod);
         if(pdfHash == 0) {
             revert NoData();
         }
 
-        return HashStorage.periodDetails(
+        return HashStorage.PeriodDetails(
             pdfHash,
             pdfLocation,
             gdp
